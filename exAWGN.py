@@ -38,8 +38,13 @@ print(wvar)
 
 
 DEBUG = True
+if DEBUG:
+    # load data generated from Matlab
+    # ln -s ../gamp-matlab/code/examples/basic/A.txt A.txt
+    # ln -s ../gamp-matlab/code/examples/basic/x.txt x.txt
+    # ln -s ../gamp-matlab/code/examples/basic/w.txt w.txt
+    # ln -s ../gamp-matlab/code/examples/basic/y.txt y.txt
 
-if DEBUG: # load data generated from Matlab
     A=np.loadtxt('A.txt')
     x=np.loadtxt('x.txt')
     w=np.loadtxt('w.txt')
@@ -78,12 +83,12 @@ print(y.shape)
 map=0
 
 # Create an input estimation class corresponding to a Gaussian vector
-inputEst=fInAWGN(xmean0,xvar0,map)
+ChannelIn=AWGNin(xmean0,xvar0,map)
 
 # Create an output estimation class corresponding to the Gaussian noise.
 # Note that the observation vector is passed to the class constructor, not
 # the gampEst function.
-outputEst=fOutAWGN(y,wvar,map)
+ChannelOut=AWGNout(y,wvar,map)
 
 # Set the default options
 opt=GampOption()
@@ -97,15 +102,15 @@ opt.adaptStepBethe = True
 opt.legacyOut = False
 # Demonstrate automatic selection of xvar0
 if 0:
-    opt.xvar0auto = copy(true)
+    opt.xvar0auto = True
     opt.xHat0 = copy(x + dot(dot(0.01,randn(nx,1)),norm(x)) / sqrt(nx))
 
 ## Run the GAMP algorithm
 tic = time.time()
-#estFin,optFin,estHist=gampEst(inputEst,outputEst,A,opt) #,nargout=3)
+#estFin,optFin,estHist=gampEst(ChannelIn,ChannelOut,A,opt) #,nargout=3)
 #xHat=estFin.xHat
 
-xHat,opt=gampEst(inputEst,outputEst,A,opt)  # simpler output (for now)
+xHat,opt=estimate(ChannelIn,ChannelOut,A,opt)  # simpler output (for now)
 toc =  time.time()
 timeGAMP=toc-tic
 
