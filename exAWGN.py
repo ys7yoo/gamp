@@ -118,7 +118,7 @@ print(xHat)
 
 #xHat = np.matrix(xHat)
 #np.save
-np.savetxt("XhatPy.txt",xHat)
+np.savetxt("xHatPy.txt",xHat)
 # with open('XhatPy.txt','w') as f:
 #     for line in xHat:
 #         np.savetxt(f, line) #, fmt='%.2f')
