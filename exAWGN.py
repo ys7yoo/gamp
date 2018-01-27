@@ -1,11 +1,10 @@
 import numpy as np
 import time
 
-# export PYTHONPATH="$HOME/src/gamp/"
 # export PYTHONPATH=.
 from channel.AWGNin import AWGNin
 from channel.AWGNout import AWGNout
-from gamp.GampOpt import GampOpt
+from gamp.Option import GampOption
 from gamp.estimate  import estimate
 
 # Simple example of estimating a Gaussian vector.
@@ -87,7 +86,7 @@ inputEst=fInAWGN(xmean0,xvar0,map)
 outputEst=fOutAWGN(y,wvar,map)
 
 # Set the default options
-opt=GampOpt()
+opt=GampOption()
 opt.nit = 10000
 opt.tol = max(min(0.001, 10**(- snr / 10)), 1e-15)
 opt.uniformVariance = 0
