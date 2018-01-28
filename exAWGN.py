@@ -123,15 +123,37 @@ np.savetxt("xHatPy.txt",xHat)
 #     for line in xHat:
 #         np.savetxt(f, line) #, fmt='%.2f')
 
-exit()
+
 
 
 # Now perform the exact LMMSE solution
 tic = time.time()
-xHatLMMSE=xmean0 + np.linalg.solve((np.dot(A.T,A) + wvar/xvar0*np.eye(nx)), np.dot(A.T,(y - np.dot(A,np.ones(nx,1))*xmean0)))
+AA=np.dot(A.T,A) + wvar/xvar0*np.eye(nx)
+BB=np.dot(A.T, y - np.dot(A,np.ones((nx,1))*xmean0))
+xHatLMMSE=xmean0 + np.linalg.solve(AA, BB)
 # xHatLMMSE = xmean0 + (A'*A + wvar/xvar0*eye(nx))\(A'*(y-A*ones(nx,1)*xmean0));
 toc =  time.time()
 timeLMMSE=toc-tic
+
+np.savetxt("xHatLMMSEPy.txt",xHat)
+
+
+print("errors: ")
+print((xHat-x).T*(xHat-x)/len(x))
+print((xHatLMMSE-x).T*(xHatLMMSE-x)/len(x))
+
+
+
+exit()
+
+
+
+
+import matplotlib.pyplot as plt
+
+fig1 = plt.figure()
+plt.plot(x,xHat, 'g.', x,xHatLMMSE, 'r.')
+
 
 
 ## Plot the results
