@@ -37,7 +37,8 @@ wvar = 10**(-0.1*snr)*(xmean0**2+xvar0)     # 1e-10
 print(wvar)
 
 
-DEBUG = True
+#DEBUG = True
+DEBUG = False
 if DEBUG:
     # load data generated from Matlab
     # ln -s ../gamp-matlab/code/examples/basic/A.txt A.txt
@@ -61,17 +62,22 @@ if DEBUG:
 else: # generate  data
 
     # Create a random measurement matrix
-    A=(1 / sqrt(nx))*np.random.randn(nz,nx)
+    A=(1 / np.sqrt(nx))*np.random.randn(nz,nx)
+    A=np.matrix(A)
     #print(A)
 
     #x=dot(xmean0, ones(nx,1)) + dot(sqrt(xvar0),randn(nx,1))
     x=xmean0*np.ones((nx,1)) + np.sqrt(xvar0)*np.random.randn(nx,1)
+    x=np.matrix(x)
     #print(x)
 
     # Generate the noise
-    w=sqrt(wvar)*np.random.randn(nz,1)
+    w=np.sqrt(wvar)*np.random.randn(nz,1)
+    w=np.matrix(w)
     #print(w)
-    y=dot(A,x) + w
+
+    y= A*x + w
+
 
 
 print(A.shape)
@@ -110,7 +116,7 @@ tic = time.time()
 #estFin,optFin,estHist=gampEst(ChannelIn,ChannelOut,A,opt) #,nargout=3)
 #xHat=estFin.xHat
 
-xHat,opt=estimate(ChannelIn,ChannelOut,A,opt)  # simpler output (for now)
+xHat,opt=estimate(ChannelIn,ChannelOut,A,opt)  
 toc =  time.time()
 timeGAMP=toc-tic
 
@@ -144,30 +150,34 @@ print((xHatLMMSE-x).T*(xHatLMMSE-x)/len(x))
 
 
 
+
+
+
+
+## Plot the results
+
+import matplotlib.pyplot as plt
+
+#fig1 = plt.figure()
+plt.plot(x,xHat, 'g.', label='GAMP')
+plt.plot(x,xHatLMMSE, 'r.', label='LLMSE')
+print([x.min(), x.max()])
+plt.plot([x.min(), x.max()], [x.min(), x.max()], '--k', linewidth=0.5)
+#plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+#           ncol=2, mode="expand", borderaxespad=0.)
+plt.legend(loc=0, borderaxespad=0.)
+
+plt.xlabel('true x')
+plt.ylabel('estimated x')
+plt.show()
+
 exit()
 
 
 
 
-import matplotlib.pyplot as plt
-
-fig1 = plt.figure()
-plt.plot(x,xHat, 'g.', x,xHatLMMSE, 'r.')
 
 
-
-## Plot the results
-figure(1)
-clf
-xsort,I=sort(x,nargout=2)
-handy=plot(xsort,xsort,'-',xsort,xHat[I],'g.',xsort,xHatLMMSE[I],'r.')
-#set(handy(2),'MarkerSize',8);
-#set(handy(3),'MarkerSize',8);
-set(gca,'FontSize',16)
-grid('on')
-legend('True','GAMP estimate','LMMSE estimate')
-xlabel('True value of x')
-ylabel('Estimate of x')
 figure(2)
 clf
 subplot(311)
